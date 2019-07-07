@@ -24,7 +24,7 @@
 	  (list
 	   '("\\<\\(r\\|w\\|x\\)\\(?:3[0-1]\\|[1-2][0-9]\\|[0-9]\\)\\>"
 	     . font-lock-variable-name-face) ;registers
-	   '("\\<\\(e?lr\\|pc\\|w?sp\\)\\>" . font-lock-builtin-face) ;special registers
+	   '("\\<\\(e?lr\\|pc\\|w?sp\\|cpsr\\)\\>" . font-lock-builtin-face) ;special registers
 	   '("\\<\\([wx]zr\\)\\>" . font-lock-constant-face))) ;zero registers
   "Second level of syntax highlighting: keywords, labels, and registers.")
 (defconst arm-font-lock-keywords-3
