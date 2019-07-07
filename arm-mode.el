@@ -19,19 +19,19 @@
 				      "bic" "cmp" "cmn" "ssat" "ssat" "ssat16" "usat" "usat" "usat16" "pkhbt" "pkhtb" "sxth" "sxtb16" "sxtb"
 				      "uxth" "uxtb16" "uxtb" "sxtah" "sxtab16" "sxtab" "uxtah" "uxtab16" "uxtab" "rev" "rev16" "revsh" "sel"
 				      "b" "bl" "bx" "blx" "bxj" "beq" "bne" "bcs" "bhs" "bcc" "blo" "bmi" "bpl" "bvs" "bvc" "bhi" "bls" "bge"
-				      "blt" "bgt" "ble" "bal" "lsl" "lsr" "asr" "ror" "rrx" "dbg" "dmb" "dsb" "isb" "sev" "wfe" "wfi" "yield"
-				      "crd" "cpsid" "cpsie" "cps" "srs" "rfe" "bkpt" "swi" "nop" "ldr" "ldm" "ldrex" "str" "stm" "strex" "swp"
-				      "cdp" "cdp2" "mrc" "mrc2" "mrrc" "mrrc2" "mcr" "mcr2" "mcrr" "mcrr2" "ldc" "ldc2" "stc" "stc2" "svc"
-				      "ADD" "ADC" "QADD" "QDADD" "SUB" "SBC" "RSB" "RSC" "QSUB" "QDSUB" "MUL" "MLA" "UMULL" "UMLAL" "UMAAL" "SMULL"
+				      "blt" "bgt" "bfc" "bfi" "sbfx" "ubfx" "ble" "bal" "lsl" "lsr" "asr" "ror" "rrx" "dbg" "dmb" "dsb" "isb"
+					  "sev" "wfe" "wfi" "yield" "crd" "cpsid" "cpsie" "cps" "srs" "rfe" "bkpt" "swi" "nop" "ldr" "ldm" "ldrex"
+					  "str" "stm" "strex" "swp" "cdp" "cdp2" "mrc" "mrc2" "mrrc" "mrrc2" "mcr" "mcr2" "mcrr" "mcrr2" "ldc" "ldc2" "stc" "stc2" "svc"
+					  "ADD" "ADC" "QADD" "QDADD" "SUB" "SBC" "RSB" "RSC" "QSUB" "QDSUB" "MUL" "MLA" "UMULL" "UMLAL" "UMAAL" "SMULL"
 				      "SMLAL" "SMULXY" "SMULWY" "SMLAXY" "SMLAWY" "SMLALX" "SMUAD" "SMLAD" "SMLALD" "SMUSD" "SMLSD" "SMLSLD" "SMMUL"
 				      "SMMLA" "SMMLS" "MIA" "MIAPH" "MIAXY" "CLZ" "ADD16" "SUB16" "ADD8" "SUB8" "ADDSUBX" "SUBADDX" "USAD8" "USADA8"
 				      "MOV" "MVN" "MRS" "MSR" "MSR" "MRA" "MAR" "CPY" "TST" "TEQ" "AND" "EOR" "ORR" "BIC" "CMP" "CMN" "SSAT" "SSAT"
 				      "SSAT16" "USAT" "USAT" "USAT16" "PKHBT" "PKHTB" "SXTH" "SXTB16" "SXTB" "UXTH" "UXTB16" "UXTB" "SXTAH" "SXTAB16"
 				      "SXTAB" "UXTAH" "UXTAB16" "UXTAB" "REV" "REV16" "REVSH" "SEL" "B" "BL" "BX" "BLX" "BXJ" "BEQ" "BNE" "BCS" "BHS"
-				      "BCC" "BLO" "BMI" "BPL" "BVS" "BVC" "BHI" "BLS" "BGE" "BLT" "BGT" "BLE" "BAL" "LSL" "LSR" "ASR" "ROR" "RRX" "DBG"
-				      "DMB" "DSB" "ISB" "SEV" "WFE" "WFI" "YIELD" "CRD" "CPSID" "CPSIE" "CPS" "SRS" "RFE" "BKPT" "SWI" "NOP" "LDR" "LDM"
-				      "LDREX" "STR" "STM" "STREX" "SWP" "CDP" "CDP2" "MRC" "MRC2" "MRRC" "MRRC2" "MCR" "MCR2" "MCRR" "MCRR2" "LDC" "LDC2"
-				      "STC" "STC2" "SVC") t) "\\>"))
+				      "BCC" "BLO" "BMI" "BPL" "BVS" "BVC" "BHI" "BLS" "BGE" "BLT" "BGT" "BFC" "BFI" "SBFX" "UBFX" "BLE" "BAL" "LSL"
+					  "LSR" "ASR" "ROR" "RRX" "DBG" "DMB" "DSB" "ISB" "SEV" "WFE" "WFI" "YIELD" "CRD" "CPSID" "CPSIE" "CPS" "SRS"
+					  "RFE" "BKPT" "SWI" "NOP" "LDR" "LDM" "LDREX" "STR" "STM" "STREX" "SWP" "CDP" "CDP2" "MRC" "MRC2" "MRRC" "MRRC2"
+					  "MCR" "MCR2" "MCRR" "MCRR2" "LDC" "LDC2" "STC" "STC2" "SVC") t) "\\>"))
 	  . font-lock-keyword-face) ;instrctions
   '("^\\s-*\\.[a-zA-Z]+" . font-lock-keyword-face) ;.data, .text .global, etc
   '("\\(?:\\b\\|\\_>\\)\\s-+\\.[a-zA-Z]+" . font-lock-type-face) ;data types
