@@ -1,0 +1,45 @@
+#+options: :\n t
+#+title: ARM-Mode
+#+author: charje
+
+Emacs major mode for editing Advanced RISC Machine source code
+
+---
+** Font-Lock
+   (syntax highlighting)
+   Customize the  ~font-lock-defaults~ variable to be one of the following
+   - ~arm-font-lock-keywords-1~
+   - ~arm-font-lock-keywords-2~
+   - ~arm-font-lock-keywords-3~
+*** level 1
+    - +keywords
+    - +labels
+*** level 2
+    - +registers
+*** level 3 (default)
+    - +hexadecimal numbers
+
+** Comments
+   ~M-;~ usually maps to ~comment-dwim~. That is what arm-mode does too.
+   However, arm-mode will try to insert ~/*   */~ if point is on an empty line. Otherwise arm-mode will just let ~comment-dwim~ insert ~@~ or indent the comment.
+
+** Indentation 
+   You can change the width of tabs by the variable ~arm-tab-width~ default is 4.
+   Pressing tab does what it does in most major modes.
+   It indents with the following rules:
+   Labels will keep whatever indentation the programmer gave them by <SPC>.
+   Lines following labels will be indented to the right. 
+   Lines following non-label lines will be the same as the previous line of code.
+
+** Hooks
+   when you call arm-mode starts up, it will run two hooks:
+   - ~prog-mode-hook~
+   - ~arm-mode-hook~
+
+---
+*** Installation
+    Clone or download wherever (usually /emacs.d/elpa/): 
+    ~$ git clone https://github.com/charje/arm-mode~
+    Then add this to your .emacs or init.el:
+    ~(add-to-list 'load-path "~/.emacs.d/elpa/arm-mode")
+    (require 'arm-mode)~
