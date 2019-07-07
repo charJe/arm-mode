@@ -17,7 +17,7 @@
      . font-lock-keyword-face)		;instrctions
    '("^\\s-*\\.[a-zA-Z]+" . font-lock-keyword-face) ;.data, .text .global, etc
    '("\\(?:\\b\\|\\_>\\)\\s-+\\.[a-zA-Z]+" . font-lock-type-face) ;data types
-   '("^\\s-*\\<[^:]+\\>" . font-lock-function-name-face)) ;labels
+   '("^\\(.*?\\):\\(.*\\)" 1 font-lock-function-name-face)) ;labels
   "Lowest level of syntax highlighting: keywords and labels.")
 (defconst arm-font-lock-keywords-2
   (append arm-font-lock-keywords-1
@@ -79,9 +79,9 @@
 		    (progn
 		      (setq cur-indent (current-indentation))
 		      (setq not-indented nil)))))))
-	  (if (< cur-indent 0)
-	      (setq cur-indent 0))
-	  (indent-line-to cur-indent)))))
+	(if (< cur-indent 0)
+	    (setq cur-indent 0))
+	(indent-line-to cur-indent)))))
 
 (defun arm-insert-comment ()
   "Insert /*   */ if on an empty line.
