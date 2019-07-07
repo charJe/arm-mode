@@ -1,6 +1,5 @@
 (defvar arm-mode-hook nil
   "Hook for ARMv8 major mode.")
-
 (defvar arm-tab-width 4
   "Width of tabs for arm mode.")
 (defvar arm-mode-map nil
@@ -12,13 +11,32 @@
 
 ;;;; font-lock, syntax highlighting
 (defconst arm-font-lock-keywords-1
-  (list
-   '("\\<\\(A\\(?:D\\(?:D\\(?:16\\|8\\|SUBX\\)\\|[CD]\\)\\|ND\\)\\|B\\(?:IC\\|KPT\\|LX\\|XJ\\|[LX]\\)\\|C\\(?:DP2?\\|LZ\\|M[NP]\\|P\\(?:SI[DE]\\|[SY]\\)\\)\\|EOR\\|LD\\(?:C2\\|REX\\|[CMR]\\)\\|M\\(?:AR\\|CR\\(?:R2\\|[2R]\\)?\\|IA\\(?:PH\\|XY\\)?\\|LA\\|OV\\|R\\(?:C2\\|RC2?\\|[ACS]\\)\\|SR\\|UL\\|VN\\)\\|NOP\\|ORR\\|PKH\\(?:BT\\|TB\\)\\|Q\\(?:ADD\\|D\\(?:ADD\\|SUB\\)\\|SUB\\)\\|R\\(?:EV\\(?:16\\|SH\\)?\\|FE\\|S[BC]\\)\\|S\\(?:BC\\|EL\\|M\\(?:L\\(?:A\\(?:L[DX]\\|[WX]Y\\|[DL]\\)\\|S\\(?:L?D\\)\\)\\|M\\(?:L[AS]\\|UL\\)\\|U\\(?:AD\\|L\\(?:L\\|[WX]Y\\)\\|SD\\)\\)\\|RS\\|SAT\\(?:16\\)?\\|T\\(?:C2\\|REX\\|[CMR]\\)\\|UB\\(?:16\\|8\\|ADDX\\)?\\|VC\\|W[IP]\\|XT\\(?:A\\(?:B16\\|[BH]\\)\\|B16\\|[BH]\\)\\)\\|T\\(?:EQ\\|ST\\)\\|U\\(?:M\\(?:\\(?:AA\\|LA\\|UL\\)L\\)\\|SA\\(?:D\\(?:A?8\\)\\|T\\(?:16\\)?\\)\\|XT\\(?:A\\(?:B16\\|[BH]\\)\\|B16\\|[BH]\\)\\)\\|a\\(?:d\\(?:d\\(?:16\\|8\\|subx\\)\\|[cd]\\)\\|nd\\)\\|b\\(?:ic\\|kpt\\|lx\\|xj\\|[lx]\\)\\|c\\(?:dp2?\\|lz\\|m[np]\\|p\\(?:si[de]\\|[sy]\\)\\)\\|eor\\|ld\\(?:c2\\|rex\\|[cmr]\\)\\|m\\(?:ar\\|cr\\(?:r2\\|[2r]\\)?\\|ia\\(?:ph\\|xy\\)?\\|la\\|ov\\|r\\(?:c2\\|rc2?\\|[acs]\\)\\|sr\\|ul\\|vn\\)\\|nop\\|orr\\|pkh\\(?:bt\\|tb\\)\\|q\\(?:add\\|d\\(?:add\\|sub\\)\\|sub\\)\\|r\\(?:ev\\(?:16\\|sh\\)?\\|fe\\|s[bc]\\)\\|s\\(?:bc\\|el\\|m\\(?:l\\(?:a\\(?:l[dx]\\|[wx]y\\|[dl]\\)\\|s\\(?:l?d\\)\\)\\|m\\(?:l[as]\\|ul\\)\\|u\\(?:ad\\|l\\(?:l\\|[wx]y\\)\\|sd\\)\\)\\|rs\\|sat\\(?:16\\)?\\|t\\(?:c2\\|rex\\|[cmr]\\)\\|ub\\(?:16\\|8\\|addx\\)?\\|vc\\|w[ip]\\|xt\\(?:a\\(?:b16\\|[bh]\\)\\|b16\\|[bh]\\)\\)\\|t\\(?:eq\\|st\\)\\|u\\(?:m\\(?:\\(?:aa\\|la\\|ul\\)l\\)\\|sa\\(?:d\\(?:a?8\\)\\|t\\(?:16\\)?\\)\\|xt\\(?:a\\(?:b16\\|[bh]\\)\\|b16\\|[bh]\\)\\)\\|[Bb]\\)\\>"
-     . font-lock-keyword-face)		;instrctions
-   '("^\\s-*\\.[a-zA-Z]+" . font-lock-keyword-face) ;.data, .text .global, etc
-   '("\\(?:\\b\\|\\_>\\)\\s-+\\.[a-zA-Z]+" . font-lock-type-face) ;data types
-   '("^\\(.*?\\):\\(.*\\)" 1 font-lock-function-name-face)) ;labels
-  "Lowest level of syntax highlighting: keywords and labels.")
+  (list `(,(eval-when-compile
+	  (concat "\\<" (regexp-opt '("add" "adc" "qadd" "qdadd" "sub" "sbc" "rsb" "rsc" "qsub" "qdsub" "mul" "mla" "umull" "umlal" "umaal"
+				      "smull" "smlal" "smulxy" "smulwy" "smlaxy" "smlawy" "smlalx" "smuad" "smlad" "smlald" "smusd" "smlsd"
+				      "smlsld" "smmul" "smmla" "smmls" "mia" "miaph" "miaxy" "clz" "add16" "sub16" "add8" "sub8" "addsubx"
+				      "subaddx" "usad8" "usada8" "mov" "mvn" "mrs" "msr" "msr" "mra" "mar" "cpy" "tst" "teq" "and" "eor" "orr"
+				      "bic" "cmp" "cmn" "ssat" "ssat" "ssat16" "usat" "usat" "usat16" "pkhbt" "pkhtb" "sxth" "sxtb16" "sxtb"
+				      "uxth" "uxtb16" "uxtb" "sxtah" "sxtab16" "sxtab" "uxtah" "uxtab16" "uxtab" "rev" "rev16" "revsh" "sel"
+				      "b" "bl" "bx" "blx" "bxj" "beq" "bne" "bcs" "bhs" "bcc" "blo" "bmi" "bpl" "bvs" "bvc" "bhi" "bls" "bge"
+				      "blt" "bgt" "ble" "bal" "lsl" "lsr" "asr" "ror" "rrx" "dbg" "dmb" "dsb" "isb" "sev" "wfe" "wfi" "yield"
+				      "crd" "cpsid" "cpsie" "cps" "srs" "rfe" "bkpt" "swi" "nop" "ldr" "ldm" "ldrex" "str" "stm" "strex" "swp"
+				      "cdp" "cdp2" "mrc" "mrc2" "mrrc" "mrrc2" "mcr" "mcr2" "mcrr" "mcrr2" "ldc" "ldc2" "stc" "stc2" "svc"
+				      "ADD" "ADC" "QADD" "QDADD" "SUB" "SBC" "RSB" "RSC" "QSUB" "QDSUB" "MUL" "MLA" "UMULL" "UMLAL" "UMAAL" "SMULL"
+				      "SMLAL" "SMULXY" "SMULWY" "SMLAXY" "SMLAWY" "SMLALX" "SMUAD" "SMLAD" "SMLALD" "SMUSD" "SMLSD" "SMLSLD" "SMMUL"
+				      "SMMLA" "SMMLS" "MIA" "MIAPH" "MIAXY" "CLZ" "ADD16" "SUB16" "ADD8" "SUB8" "ADDSUBX" "SUBADDX" "USAD8" "USADA8"
+				      "MOV" "MVN" "MRS" "MSR" "MSR" "MRA" "MAR" "CPY" "TST" "TEQ" "AND" "EOR" "ORR" "BIC" "CMP" "CMN" "SSAT" "SSAT"
+				      "SSAT16" "USAT" "USAT" "USAT16" "PKHBT" "PKHTB" "SXTH" "SXTB16" "SXTB" "UXTH" "UXTB16" "UXTB" "SXTAH" "SXTAB16"
+				      "SXTAB" "UXTAH" "UXTAB16" "UXTAB" "REV" "REV16" "REVSH" "SEL" "B" "BL" "BX" "BLX" "BXJ" "BEQ" "BNE" "BCS" "BHS"
+				      "BCC" "BLO" "BMI" "BPL" "BVS" "BVC" "BHI" "BLS" "BGE" "BLT" "BGT" "BLE" "BAL" "LSL" "LSR" "ASR" "ROR" "RRX" "DBG"
+				      "DMB" "DSB" "ISB" "SEV" "WFE" "WFI" "YIELD" "CRD" "CPSID" "CPSIE" "CPS" "SRS" "RFE" "BKPT" "SWI" "NOP" "LDR" "LDM"
+				      "LDREX" "STR" "STM" "STREX" "SWP" "CDP" "CDP2" "MRC" "MRC2" "MRRC" "MRRC2" "MCR" "MCR2" "MCRR" "MCRR2" "LDC" "LDC2"
+				      "STC" "STC2" "SVC") t) "\\>"))
+	  . font-lock-keyword-face) ;instrctions
+  '("^\\s-*\\.[a-zA-Z]+" . font-lock-keyword-face) ;.data, .text .global, etc
+  '("\\(?:\\b\\|\\_>\\)\\s-+\\.[a-zA-Z]+" . font-lock-type-face) ;data types
+  '("^\\(.*?\\):\\(.*\\)" 1 font-lock-function-name-face)) ;labels
+"Lowest level of syntax highlighting: keywords and labels.")
 (defconst arm-font-lock-keywords-2
   (append arm-font-lock-keywords-1
 	  (list
