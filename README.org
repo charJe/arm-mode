@@ -4,7 +4,6 @@
 
 Emacs major mode for editing Advanced RISC Machine source code
 
----
 ** Font-Lock
    (syntax highlighting)
    Customize the  ~font-lock-defaults~ variable to be one of the following
@@ -35,8 +34,7 @@ Emacs major mode for editing Advanced RISC Machine source code
    when you call arm-mode starts up, it will run two hooks:
    - ~prog-mode-hook~
    - ~arm-mode-hook~
-
----
+   
 *** Installation
     Clone or download wherever (usually /emacs.d/elpa/): 
     ~$ git clone https://github.com/charje/arm-mode~
