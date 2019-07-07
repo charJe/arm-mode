@@ -1,14 +1,20 @@
-/* -- test.arm */
-/* This is a comment */
+/* -- test.arm
+* This is a comment */
 .data
-var1: .word 4
+ varo1: .word 4
+ 
 var2: .word 6
+
 .text
 .global main			@ entry point must be global
-.func  main		@ 'main' is a function
-main:
-    b left
-    /* This is main */
+.func  main			@ 'main' is a function
+main:				/* This is main */
+    
     mov r0, #0x2		@ Put a 2 into register r
     bx  lr			@ Return from
 loop:
+    mov r0,
+    b loop
+    loop2:
+    mov r0, r4
+    b loop2
