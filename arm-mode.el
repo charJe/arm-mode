@@ -21,7 +21,8 @@
 				      "b" "bl" "bx" "blx" "bxj" "beq" "bne" "bcs" "bhs" "bcc" "blo" "bmi" "bpl" "bvs" "bvc" "bhi" "bls" "bge"
 				      "blt" "bgt" "bfc" "bfi" "sbfx" "ubfx" "ble" "bal" "lsl" "lsr" "asr" "ror" "rrx" "dbg" "dmb" "dsb" "isb"
 					  "sev" "wfe" "wfi" "yield" "crd" "cpsid" "cpsie" "cps" "srs" "rfe" "bkpt" "swi" "nop" "ldr" "ldm" "ldrex"
-					  "str" "stm" "strex" "swp" "cdp" "cdp2" "mrc" "mrc2" "mrrc" "mrrc2" "mcr" "mcr2" "mcrr" "mcrr2" "ldc" "ldc2" "stc" "stc2" "svc"
+					  "str" "stm" "strex" "swp" "cdp" "cdp2" "mrc" "mrc2" "mrrc" "mrrc2" "mcr" "mcr2" "mcrr" "mcrr2" "ldc" "ldc2"
+					  "stc" "stc2" "svc" "it" "cb" "tbb" "tbh" "setend" "d" "pop" "push" "strexd" "swpb" "smc" "sax" "asx" "subs" "adr"
 					  "ADD" "ADC" "QADD" "QDADD" "SUB" "SBC" "RSB" "RSC" "QSUB" "QDSUB" "MUL" "MLA" "UMULL" "UMLAL" "UMAAL" "SMULL"
 				      "SMLAL" "SMULXY" "SMULWY" "SMLAXY" "SMLAWY" "SMLALX" "SMUAD" "SMLAD" "SMLALD" "SMUSD" "SMLSD" "SMLSLD" "SMMUL"
 				      "SMMLA" "SMMLS" "MIA" "MIAPH" "MIAXY" "CLZ" "ADD16" "SUB16" "ADD8" "SUB8" "ADDSUBX" "SUBADDX" "USAD8" "USADA8"
@@ -31,8 +32,9 @@
 				      "BCC" "BLO" "BMI" "BPL" "BVS" "BVC" "BHI" "BLS" "BGE" "BLT" "BGT" "BFC" "BFI" "SBFX" "UBFX" "BLE" "BAL" "LSL"
 					  "LSR" "ASR" "ROR" "RRX" "DBG" "DMB" "DSB" "ISB" "SEV" "WFE" "WFI" "YIELD" "CRD" "CPSID" "CPSIE" "CPS" "SRS"
 					  "RFE" "BKPT" "SWI" "NOP" "LDR" "LDM" "LDREX" "STR" "STM" "STREX" "SWP" "CDP" "CDP2" "MRC" "MRC2" "MRRC" "MRRC2"
-					  "MCR" "MCR2" "MCRR" "MCRR2" "LDC" "LDC2" "STC" "STC2" "SVC") t) "\\>"))
-	  . font-lock-keyword-face) ;instrctions
+					  "MCR" "MCR2" "MCRR" "MCRR2" "LDC" "LDC2" "STC" "STC2" "SVC" "IT" "CB" "TBB" "TBH" "SETEND" "D" "POP" "PUSH"
+					  "STREXD" "SWPB" "SMC" "SAX" "ASX" "SUBS" "ADR") t) "\\>"))
+		  . font-lock-keyword-face) ;instrctions
   '("^\\s-*\\.[a-zA-Z]+" . font-lock-keyword-face) ;.data, .text .global, etc
   '("\\(?:\\b\\|\\_>\\)\\s-+\\.[a-zA-Z]+" . font-lock-type-face) ;data types
   '("^\\(.*?\\):\\(.*\\)" 1 font-lock-function-name-face)) ;labels
