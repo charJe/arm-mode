@@ -2,55 +2,56 @@
   "Hook for ARMv8 major mode.")
 (defvar arm-tab-width 4
   "Width of tabs for arm mode.")
+(defvar arm-comment-char "@"
+  "Character to denote inline comments.")
 (defvar arm-mode-map nil
   "Keymap for ARMv8 major mode.")
 (setq arm-mode-map (make-sparse-keymap))
 (define-key arm-mode-map (kbd "M-;") #'arm-insert-comment)
-;;;;###autoload
+;;;###autoload
 (add-to-list 'auto-mode-alist '("\\.arm\\'" . arm-mode))
 
 ;;;; font-lock, syntax highlighting
 (defconst arm-font-lock-keywords-1
-  (list `(,(eval-when-compile
-	  (concat "\\<" (regexp-opt '("add" "adc" "qadd" "qdadd" "sub" "sbc" "rsb" "rsc" "qsub" "qdsub" "mul" "mla" "umull" "umlal" "umaal"
-				      "smull" "smlal" "smulxy" "smulwy" "smlaxy" "smlawy" "smlalx" "smuad" "smlad" "smlald" "smusd" "smlsd"
-				      "smlsld" "smmul" "smmla" "smmls" "mia" "miaph" "miaxy" "clz" "add16" "sub16" "add8" "sub8" "addsubx"
-				      "subaddx" "usad8" "usada8" "mov" "mvn" "mrs" "msr" "msr" "mra" "mar" "cpy" "tst" "teq" "and" "eor" "orr"
-				      "bic" "cmp" "cmn" "ssat" "ssat" "ssat16" "usat" "usat" "usat16" "pkhbt" "pkhtb" "sxth" "sxtb16" "sxtb"
-				      "uxth" "uxtb16" "uxtb" "sxtah" "sxtab16" "sxtab" "uxtah" "uxtab16" "uxtab" "rev" "rev16" "revsh" "sel"
-				      "b" "bl" "bx" "blx" "bxj" "beq" "bne" "bcs" "bhs" "bcc" "blo" "bmi" "bpl" "bvs" "bvc" "bhi" "bls" "bge"
-				      "blt" "bgt" "bfc" "bfi" "sbfx" "ubfx" "ble" "bal" "lsl" "lsr" "asr" "ror" "rrx" "dbg" "dmb" "dsb" "isb"
-					  "sev" "wfe" "wfi" "yield" "crd" "cpsid" "cpsie" "cps" "srs" "rfe" "bkpt" "swi" "nop" "ldr" "ldm" "ldrex"
-					  "str" "stm" "strex" "swp" "cdp" "cdp2" "mrc" "mrc2" "mrrc" "mrrc2" "mcr" "mcr2" "mcrr" "mcrr2" "ldc" "ldc2"
-					  "stc" "stc2" "svc" "it" "cb" "tbb" "tbh" "setend" "d" "pop" "push" "strexd" "swpb" "smc" "sax" "asx" "subs" "adr"
-					  "ADD" "ADC" "QADD" "QDADD" "SUB" "SBC" "RSB" "RSC" "QSUB" "QDSUB" "MUL" "MLA" "UMULL" "UMLAL" "UMAAL" "SMULL"
-				      "SMLAL" "SMULXY" "SMULWY" "SMLAXY" "SMLAWY" "SMLALX" "SMUAD" "SMLAD" "SMLALD" "SMUSD" "SMLSD" "SMLSLD" "SMMUL"
-				      "SMMLA" "SMMLS" "MIA" "MIAPH" "MIAXY" "CLZ" "ADD16" "SUB16" "ADD8" "SUB8" "ADDSUBX" "SUBADDX" "USAD8" "USADA8"
-				      "MOV" "MVN" "MRS" "MSR" "MSR" "MRA" "MAR" "CPY" "TST" "TEQ" "AND" "EOR" "ORR" "BIC" "CMP" "CMN" "SSAT" "SSAT"
-				      "SSAT16" "USAT" "USAT" "USAT16" "PKHBT" "PKHTB" "SXTH" "SXTB16" "SXTB" "UXTH" "UXTB16" "UXTB" "SXTAH" "SXTAB16"
-				      "SXTAB" "UXTAH" "UXTAB16" "UXTAB" "REV" "REV16" "REVSH" "SEL" "B" "BL" "BX" "BLX" "BXJ" "BEQ" "BNE" "BCS" "BHS"
-				      "BCC" "BLO" "BMI" "BPL" "BVS" "BVC" "BHI" "BLS" "BGE" "BLT" "BGT" "BFC" "BFI" "SBFX" "UBFX" "BLE" "BAL" "LSL"
-					  "LSR" "ASR" "ROR" "RRX" "DBG" "DMB" "DSB" "ISB" "SEV" "WFE" "WFI" "YIELD" "CRD" "CPSID" "CPSIE" "CPS" "SRS"
-					  "RFE" "BKPT" "SWI" "NOP" "LDR" "LDM" "LDREX" "STR" "STM" "STREX" "SWP" "CDP" "CDP2" "MRC" "MRC2" "MRRC" "MRRC2"
-					  "MCR" "MCR2" "MCRR" "MCRR2" "LDC" "LDC2" "STC" "STC2" "SVC" "IT" "CB" "TBB" "TBH" "SETEND" "D" "POP" "PUSH"
-					  "STREXD" "SWPB" "SMC" "SAX" "ASX" "SUBS" "ADR") t) "\\>"))
-		  . font-lock-keyword-face) ;instrctions
-  '("^\\s-*\\.[a-zA-Z]+" . font-lock-keyword-face) ;.data, .text .global, etc
-  '("\\(?:\\b\\|\\_>\\)\\s-+\\.[a-zA-Z]+" . font-lock-type-face) ;data types
-  '("^\\(.*?\\):\\(.*\\)" 1 font-lock-function-name-face)) ;labels
-"Lowest level of syntax highlighting: keywords and labels.")
+  (eval-when-compile
+	(let ((conditions (regexp-opt '("eq" "ne" "cs" "hs" "cc" "lo" "mi" "pl" "vs" "vc" "hi" "ls" "ge" "lt" "gt" "le" "al")))
+		  (conditional-instrs (regexp-opt '("add" "adc" "qadd" "qdadd" "sub" "sbc" "rsb" "rsc" "qsub" "qdsub" "mul" "mla" 
+											"smull" "smlal" "smulxy" "smulwy" "smlaxy" "smlawy" "smlalx" "smuad" "smlad" "smlald" "smusd" "smlsd"
+											"smlsld" "smmul" "smmla" "smmls" "mia" "miaph" "miaxy" "clz" "addsubx" "umull" "umlal" "umaal"
+											"subaddx" "usad8" "usada8" "mov" "mvn" "movt" "mrs" "msr" "msr" "mra" "mar" "cpy" "tst" "teq" "and" "eor" "orr"
+											"bic" "cmp" "cmn" "ssat" "ssat" "ssat16" "usat" "usat" "usat16" "pkhbt" "pkhtb" "sxth" "sxtb16" "sxtb"
+											"uxth" "uxtb16" "uxtb" "sxtah" "sxtab16" "sxtab" "uxtah" "uxtab16" "uxtab" "rev" "rev16" "revsh" "sel"
+											"b" "bl" "bx" "bxj" "beq" "bne" "bcs" "bhs" "bcc" "blo" "bmi" "bpl" "bvs" "bvc" "bhi" "bls" "bge"
+											"blt" "bgt" "bfc" "bfi" "sbfx" "ubfx" "ble" "bal" "lsl" "lsr" "asr" "ror" "rrx" "dbg" "sev" "wfe" "wfi"
+											"yield" "crd" "swi" "nop" "ldr" "ldm" "ldrex" "str" "stm" "strex" "swp"  "ldc" "ldc2" "stc" "stc2" "svc"
+											"d" "pop" "push" "strexd" "swpb" "smc"  "subs" "adr")
+										  t))
+		  (non-conditional-instrs (regexp-opt '("it" "blx" "cb" "tbb" "tbh" "cpsid" "cpsie" "cps" "setend" "clrex" "cdp"
+												"cdp2" "mrc" "mrc2" "mrrc" "mrrc2" "mcr" "mcr2" "mcrr" "mcrr2" "srs" "rfe"
+												"bkpt" "dmb" "dsb" "isb")
+											  'word))
+		  (prefixs (regexp-opt '("s" "q" "sh" "u" "uq" "uh")))
+		  (prefix-instrs (regexp-opt '("add16" "sub16" "add8" "sub8" "sax" "asx") t)))
+	  (list
+	   `(,(concat "\\<" conditional-instrs conditions "?\\>") . font-lock-keyword-face) ;instrctions
+	   `(,(concat "\\<" prefixs "?" prefix-instrs conditions "?\\>") . font-lock-keyword-face) ;other instructions
+	   `(,non-conditional-instrs . font-lock-keyword-face) ;more instructions
+	   '("^\\s-*\\.[a-zA-Z]+" . font-lock-keyword-face) ;.data, .text .global, etc
+	   '("\\(?:\\b\\|\\_>\\)\\s-+\\.[a-zA-Z]+" . font-lock-type-face) ;data types
+	   '("^\\(.*?\\):\\(.*\\)" 1 font-lock-function-name-face)))) ;labels
+  "Lowest level of syntax highlighting: keywords and labels.")
 (defconst arm-font-lock-keywords-2
   (append arm-font-lock-keywords-1
-	  (list
-	   '("\\<\\(r\\|w\\|x\\)\\(?:3[0-1]\\|[1-2][0-9]\\|[0-9]\\)\\>"
-	     . font-lock-variable-name-face) ;registers
-	   '("\\<\\(e?lr\\|pc\\|w?sp\\|cpsr\\)\\>" . font-lock-builtin-face) ;special registers
-	   '("\\<\\([wx]zr\\)\\>" . font-lock-constant-face))) ;zero registers
+		  (list
+		   '("\\<\\(r\\|w\\|x\\)\\(?:3[0-1]\\|[1-2][0-9]\\|[0-9]\\)\\>"
+			 . font-lock-variable-name-face) ;registers
+		   '("\\<\\(e?lr\\|pc\\|w?sp\\|cpsr\\)\\>" . font-lock-builtin-face) ;special registers
+		   '("\\<\\([wx]zr\\)\\>" . font-lock-constant-face))) ;zero registers
   "Second level of syntax highlighting: keywords, labels, and registers.")
 (defconst arm-font-lock-keywords-3
   (append arm-font-lock-keywords-2
-	  (list
-	   '("0x[a-fA-f0-9]+" . font-lock-type-face))) ;hexidecimal
+		  (list
+		   '("0x[a-fA-f0-9]+" . font-lock-type-face))) ;hexidecimal
   "Third level of syntax highlighting: keywords, labels, registers, and hexidecimal numbers.")
 (defvar arm-font-lock-keywords arm-font-lock-keywords-3
   "Default syntax highlighting: keywords, labels, registers, and hexidecimal numbers.")
@@ -81,39 +82,39 @@
   (if (bobp)				;check for rule 1
       (indent-line-to 0)
     (if (looking-at "^.*:")		;check for rule 4
-	(indent-line-to (current-indentation))
+		(indent-line-to (current-indentation))
       (let ((not-indented t)
-	    cur-indent)
-	(save-excursion
-	  (while not-indented
-	    (forward-line -1)
-	    (if (looking-at "^.*:\\s-*\\.") ;data label
-		(progn
-		  (setq cur-indent (current-indentation))
-		  (setq not-indented nil))
-	      (if (looking-at "^.*:") ;check for rule 2
-		  (progn
-		    (setq cur-indent (+ (current-indentation) arm-tab-width))
-		    (setq not-indented nil))
-		(if (looking-at "^.[^\\n]")	;check for rule 3
-		    (progn
-		      (setq cur-indent (current-indentation))
-		      (setq not-indented nil)))))))
-	(if (< cur-indent 0)
-	    (setq cur-indent 0))
-	(indent-line-to cur-indent)))))
+			cur-indent)
+		(save-excursion
+		  (while not-indented
+			(forward-line -1)
+			(if (looking-at "^.*:\\s-*\\.") ;data label
+				(progn
+				  (setq cur-indent (current-indentation))
+				  (setq not-indented nil))
+			  (if (looking-at "^.*:") ;check for rule 2
+				  (progn
+					(setq cur-indent (+ (current-indentation) arm-tab-width))
+					(setq not-indented nil))
+				(if (looking-at "^.[^\\n]")	;check for rule 3
+					(progn
+					  (setq cur-indent (current-indentation))
+					  (setq not-indented nil)))))))
+		(if (< cur-indent 0)
+			(setq cur-indent 0))
+		(indent-line-to cur-indent)))))
 
 (defun arm-insert-comment ()
   "Insert /*   */ if on an empty line.
 Then call comment-dwim."
   (interactive)
   (let ((special (and (save-excursion
-			(move-beginning-of-line nil)
-			(looking-at "^\\s-*$"))
-		      (not (use-region-p)))))		;empty line
+						(move-beginning-of-line nil)
+						(looking-at "^\\s-*$"))
+					  (not (use-region-p)))))		;empty line
     (when special
       (progn
-	(insert "/*   */")))
+		(insert "/*   */")))
     (comment-dwim nil)
     (when special
       (forward-char))))			;move to middle of /*   */
@@ -125,14 +126,14 @@ Then call comment-dwim."
   (kill-all-local-variables)
   (set-syntax-table arm-mode-syntax-table)
   (use-local-map arm-mode-map)
-  (set (make-local-variable 'font-lock-defaults) '(arm-font-lock-keywords))
+  (set (make-local-variable 'font-lock-defaults) '(arm-font-lock-keywords nil t))
   (set (make-local-variable 'indent-line-function) #'arm-indent-line)
-  ;; comments
-  (setq-local comment-start "@ ")
-  (setq-local comment-end "")
   (setq major-mode 'arm-mode)
   (setq mode-name "ARM Assembler")
   (run-hooks 'prog-mode-hook)
-  (run-hooks 'arm-mode-hook))
+  (run-hooks 'arm-mode-hook)
+  ;; comments
+  (setq-local comment-start (concat arm-comment-char " "))
+  (setq-local comment-end ""))
 
 (provide 'arm-mode)
