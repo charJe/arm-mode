@@ -61,6 +61,7 @@
   (let ((st (make-syntax-table)))
     (modify-syntax-entry ?: "_" st)
     (modify-syntax-entry ?. "." st)
+	(modify-syntax-entry ?_ "w" st)		;for convention of using _ in labels
     (modify-syntax-entry ?\' "\"" st)
     ;; comments
     (modify-syntax-entry ?/ ". 14" st)
