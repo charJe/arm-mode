@@ -33,20 +33,21 @@
 		  (prefixs (regexp-opt '("s" "q" "sh" "u" "uq" "uh")))
 		  (prefix-instrs (regexp-opt '("add16" "sub16" "add8" "sub8" "sax" "asx") t)))
 	  (list
-	   `(,(concat "\\<" conditional-instrs conditions "?\\>") . font-lock-keyword-face) ;instrctions
-	   `(,(concat "\\<" prefixs "?" prefix-instrs conditions "?\\>") . font-lock-keyword-face) ;other instructions
-	   `(,non-conditional-instrs . font-lock-keyword-face) ;more instructions
 	   '("^\\s-*\\.[a-zA-Z]+" . font-lock-keyword-face) ;.data, .text .global, etc
 	   '("\\(?:\\b\\|\\_>\\)\\s-+\\.[a-zA-Z]+" . font-lock-type-face) ;data types
-	   '("^\\(.*?\\):\\(.*\\)" 1 font-lock-function-name-face)))) ;labels
+	   '("^\\(.*?\\):\\(.*\\)" 1 font-lock-function-name-face);labels
+	   `(,(concat "\\<" conditional-instrs conditions "?\\>") . font-lock-keyword-face) ;instrctions
+	   `(,(concat "\\<" prefixs "?" prefix-instrs conditions "?\\>") . font-lock-keyword-face) ;other instructions
+	   `(,non-conditional-instrs . font-lock-keyword-face))))  ;more instructions
+
   "Lowest level of syntax highlighting: keywords and labels.")
 (defconst arm-font-lock-keywords-2
-  (append arm-font-lock-keywords-1
-		  (list
+  (append (list
 		   '("\\<\\(r\\|w\\|x\\)\\(?:3[0-1]\\|[1-2][0-9]\\|[0-9]\\)\\>"
 			 . font-lock-variable-name-face) ;registers
 		   '("\\<\\(e?lr\\|pc\\|w?sp\\|cpsr\\)\\>" . font-lock-builtin-face) ;special registers
-		   '("\\<\\([wx]zr\\)\\>" . font-lock-constant-face))) ;zero registers
+		   '("\\<\\([wx]zr\\)\\>" . font-lock-constant-face)) ;zero registers
+		  arm-font-lock-keywords-1)
   "Second level of syntax highlighting: keywords, labels, and registers.")
 (defconst arm-font-lock-keywords-3
   (append arm-font-lock-keywords-2
