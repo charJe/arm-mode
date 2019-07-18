@@ -29,17 +29,16 @@
 		  (non-conditional-instrs (regexp-opt '("it" "blx" "cb" "tbb" "tbh" "cpsid" "cpsie" "cps" "setend" "clrex" "cdp"
 												"cdp2" "mrc" "mrc2" "mrrc" "mrrc2" "mcr" "mcr2" "mcrr" "mcrr2" "srs" "rfe"
 												"bkpt" "dmb" "dsb" "isb")
-											  'word))
+											  t))
 		  (prefixs (regexp-opt '("s" "q" "sh" "u" "uq" "uh")))
 		  (prefix-instrs (regexp-opt '("add16" "sub16" "add8" "sub8" "sax" "asx") t)))
 	  (list
 	   '("^\\s-*\\.[a-zA-Z]+" . font-lock-keyword-face) ;.data, .text .global, etc
 	   '("\\(?:\\b\\|\\_>\\)\\s-+\\.[a-zA-Z]+" . font-lock-type-face) ;data types
-	   '("^\\(.*?\\):\\(.*\\)" 1 font-lock-function-name-face);labels
-	   `(,(concat "\\<" conditional-instrs conditions "?\\>") . font-lock-keyword-face) ;instrctions
-	   `(,(concat "\\<" prefixs "?" prefix-instrs conditions "?\\>") . font-lock-keyword-face) ;other instructions
-	   `(,non-conditional-instrs . font-lock-keyword-face))))  ;more instructions
-
+	   '("^\\(.*?\\):\\(.*\\)" 1 font-lock-function-name-face) ;labels
+	   `(,(concat "\\<" conditional-instrs conditions "?\\>") . font-lock-keyword-face) ;conditional instrctions
+	   `(,(concat "\\<" prefixs "?" prefix-instrs conditions "?\\>") . font-lock-keyword-face) ;prefix and conditional  instructions
+	   `(,(concat "\\<" non-conditional-instrs "\\>") . font-lock-keyword-face)))) ;non conditionals instructions
   "Lowest level of syntax highlighting: keywords and labels.")
 (defconst arm-font-lock-keywords-2
   (append (list
