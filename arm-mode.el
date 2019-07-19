@@ -10,7 +10,7 @@
 (define-key arm-mode-map (kbd "M-;") #'arm-insert-comment)
 ;;;###autoload
 (add-to-list 'auto-mode-alist '("\\.arm\\'" . arm-mode))
-
+     
 ;;;; font-lock, syntax highlighting
 (defconst arm-font-lock-keywords-1
   (eval-when-compile
@@ -76,34 +76,42 @@
 ;; 2 If the previous line is a non-data label, indent to the right.
 ;; 3 else indent the same as previous line.
 ;; 4 if line contains a colon(label), do not change it's indentaion
+;; 5 (secret) if the line is a comment allign it to the left
 (defun arm-indent-line ()
   "Indent current line of ARM code."
   (interactive)
   (beginning-of-line)
   (if (bobp)				;check for rule 1
       (indent-line-to 0)
-    (if (looking-at "^.*:")		;check for rule 4
-		(indent-line-to (current-indentation))
-      (let ((not-indented t)
-			cur-indent)
-		(save-excursion
-		  (while not-indented
-			(forward-line -1)
-			(if (looking-at "^.*:\\s-*\\.") ;data label
-				(progn
-				  (setq cur-indent (current-indentation))
-				  (setq not-indented nil))
-			  (if (looking-at "^.*:") ;check for rule 2
+	(if (looking-at "^\\s *\\(/\\*\\|@\\)") ;check for rule 5
+		(indent-line-to (save-excursion		;indentation of the next line
+						  (forward-line 1)
+						  (if (looking-at "^$") ;not empty line
+							(progn
+							  (forward-line -1)
+							  (current-indentation))
+							(current-indentation))))
+	  (if (looking-at "^.*:")		;check for rule 4
+		  (indent-line-to (current-indentation))
+		(let ((not-indented t) cur-indent)
+		  (save-excursion
+			(while not-indented
+			  (forward-line -1)
+			  (if (looking-at "^.*:\\s-*\\.") ;data label
 				  (progn
-					(setq cur-indent (+ (current-indentation) arm-tab-width))
+					(setq cur-indent (current-indentation))
 					(setq not-indented nil))
-				(if (looking-at "^.[^\\n]")	;check for rule 3
+				(if (looking-at "^.*:") ;check for rule 2
 					(progn
-					  (setq cur-indent (current-indentation))
-					  (setq not-indented nil)))))))
-		(if (< cur-indent 0)
-			(setq cur-indent 0))
-		(indent-line-to cur-indent)))))
+					  (setq cur-indent (+ (current-indentation) arm-tab-width))
+					  (setq not-indented nil))
+				  (if (looking-at "^.[^\\n]")	;check for rule 3
+					  (progn
+						(setq cur-indent (current-indentation))
+						(setq not-indented nil)))))))
+		  (if (< cur-indent 0)
+			  (setq cur-indent 0))
+		  (indent-line-to cur-indent))))))
 
 (defun arm-insert-comment ()
   "Insert /*   */ if on an empty line.
