@@ -1,14 +1,14 @@
 (defvar arm-mode-hook nil
-  "Hook for ARMv8 major mode.")
+  "Hook for ARM major mode.")
 (defvar arm-tab-width 4
   "Width of tabs for arm mode.")
-(defvar arm-insert-tab nil
+(defvar arm-insert-tab nilf
   "When t, TAB inserts a tab instead of auto indention the code.
 arm-insert-tab should be nil if you want to wrtie old style assembler code.")
 (defvar arm-comment-char "@"
   "Character to denote inline comments.")
 (defvar arm-mode-map nil
-  "Keymap for ARMv8 major mode.")
+  "Keymap for ARM major mode.")
 (setq arm-mode-map (make-sparse-keymap))
 (define-key arm-mode-map (kbd "M-;") #'arm-insert-comment)
 ;;;###autoload
