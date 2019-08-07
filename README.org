@@ -26,9 +26,12 @@ Emacs major mode for editing Advanced RISC Machine source code
    You can change the width of tabs by the variable ~arm-tab-width~ default is 4.
    Pressing tab does what it does in most major modes.
    It indents with the following rules:
-   Labels will keep whatever indentation the programmer gave them by <SPC>.
+   Labels will keep whatever indentation the programmer gave them by spaces.
    Lines following labels will be indented to the right. 
    Lines following non-label lines will be the same as the previous line of code.
+
+   If you want to write old ARM code or use a dumb text editor then you can set the put set ~arm-insert-tab~ to ~t~ by putting this in your init file:
+~(setq arm-insert-tab t)~
 
 ** Hooks
    when you call arm-mode starts up, it will run two hooks:
@@ -36,7 +39,7 @@ Emacs major mode for editing Advanced RISC Machine source code
    - ~arm-mode-hook~
    
 ** Installation
-    Clone or download wherever (usually /emacs.d/elpa/): 
+    Clone or download wherever (usually =~/emacs.d/elpa/=): 
     ~$ git clone https://github.com/charje/arm-mode~
     Then add this to your .emacs or init.el:
     ~(add-to-list 'load-path "~/.emacs.d/elpa/arm-mode")
