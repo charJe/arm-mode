@@ -1,3 +1,9 @@
+;;; -*- lexical-binding: t -*-
+;;; arm-mode.el --- Major mode for editing Advanced RISC Machine source code
+;;; Version: 1
+;;; Maintainer: Charles Jackson
+;;; URL: https://github.com/charje/arm-mode
+
 (defvar arm-mode-hook nil
   "Hook for ARM major mode.")
 (defvar arm-tab-width 4
