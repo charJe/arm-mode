@@ -44,7 +44,7 @@
           (prefixs (regexp-opt '("s" "q" "sh" "u" "uq" "uh")))
           (prefix-instrs (regexp-opt '("add16" "sub16" "add8" "sub8" "sax" "asx") t)))
       (list
-       '("^\\s-*\\.[a-zA-Z]+" . font-lock-keyword-face) ;.data, .text .global, etc
+       '("^\\s-*\\.[:alpha:]+" . font-lock-keyword-face) ;.data, .text .global, etc
        '("\\(?:\\b\\|\\_>\\)\\s-+\\.[a-zA-Z]+" . font-lock-type-face) ;data types
        '("^\\(.*?\\):\\(.*\\)" 1 font-lock-function-name-face) ;labels
        `(,(concat "\\<v?" suffix-instrs "\\.?" suffixes "?\\>") . font-lock-keyword-face) ;suffix instrctions
