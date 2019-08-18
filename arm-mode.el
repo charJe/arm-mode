@@ -79,16 +79,7 @@
     st)
   "Syntax tables for `arm-mode'.")
 
-(defun arm-indent-line ()
-  "Indent current line of ARM code as follows.
-Indentation Rules:
-1: If we are at the beginning of the buffer, indent to column 0.
-2: If the previous line is a non-data label, indent to the right.
-3: else indent the same as previous line of code.
-4: if line contains a colon (label), insert a tab character
-5: (secret) if the line is a comment allign it to the left"
-  (interactive)
-  (defun arm-mode-find-indent-level ()
+(defun arm-mode-find-indent-level ()
 	"Return the absolute ammount that an line of arm assembler should be indented."
 	(save-excursion
 	  (beginning-of-line)
@@ -120,7 +111,16 @@ Indentation Rules:
 						(setf new-indent (current-indentation)))))) ;don't mess with it
 				new-indent))))))) ;indent to the right
 
-  (let ((new-indent (arm-mode-find-indent-level)))
+(defun arm-indent-line ()
+  "Indent current line of ARM code as follows.
+Indentation Rules:
+1: If we are at the beginning of the buffer, indent to column 0.
+2: If the previous line is a non-data label, indent to the right.
+3: else indent the same as previous line of code.
+4: if line contains a colon (label), insert a tab character
+5: (secret) if the line is a comment allign it to the left"
+  (interactive)
+    (let ((new-indent (arm-mode-find-indent-level)))
 	(if (< new-indent 0)
 		(setq new-indent 0))
 	(indent-line-to new-indent)))
