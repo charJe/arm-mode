@@ -30,8 +30,8 @@ Emacs major mode for editing Advanced RISC Machine source code
    Lines following labels will be indented to the right. 
    Lines following non-label lines will be the same as the previous line of code.
 
-   If you want to write old ARM code or TAB to insert a tab then you can set the put set ~arm-insert-tab~ to ~t~ by putting this in your init file:
-~(setq arm-insert-tab t)~
+   If you want to write old ARM code or TAB to insert a tab character then you 
+   can customize the variable ~tab-always-indent~
 
 ** Hooks
    when you call arm-mode starts up, it will run two hooks:
