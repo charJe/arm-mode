@@ -11,10 +11,10 @@
 (defvar arm-comment-char "@"
   "Character to denote inline comments.")
 (defvar arm-mode-map
-  (let ((map make-sparse-keymap))
+  (let ((map (make-sparse-keymap)))
     (define-key map (kbd "M-;") #'arm-insert-comment)
     map)
-"Keymap for ARM major mode.")
+  "Keymap for ARM major mode.")
 ;;;###autoload
 (add-to-list 'auto-mode-alist '("\\.arm\\'" . arm-mode))
 
@@ -69,7 +69,7 @@
     (modify-syntax-entry ?: "_" st)
     (modify-syntax-entry ?= "_" st)
     (modify-syntax-entry ?. "." st)
-    (modify-syntax-entry ?_ "w" st)                                         ;for convention of using _ in labels
+    (modify-syntax-entry ?_ "w" st)	;for convention of using _ in labels
     (modify-syntax-entry ?\' "\"" st)
     ;; comments
     (modify-syntax-entry ?/ ". 14" st)
@@ -79,47 +79,51 @@
     st)
   "Syntax tables for `arm-mode'.")
 
-;; indentation rules:
-;; 1 If we are at the beginning of the buffer, indent to column 0.
-;; 2 If the previous line is a non-data label, indent to the right.
-;; 3 else indent the same as previous line.
-;; 4 if line contains a colon(label), do not change it's indentaion
-;; 5 (secret) if the line is a comment allign it to the left
 (defun arm-indent-line ()
-  "Indent current line of ARM code."
+  "Indent current line of ARM code as follows.
+Indentation Rules:
+1: If we are at the beginning of the buffer, indent to column 0.
+2: If the previous line is a non-data label, indent to the right.
+3: else indent the same as previous line of code.
+4: if line contains a colon (label), insert a tab character
+5: (secret) if the line is a comment allign it to the left"
   (interactive)
-  (beginning-of-line)
-  (if (bobp)                                                              ;check for rule 1
-      (indent-line-to 0)
-    (if (looking-at "^\\s *\\(/\\*\\|@\\)") ;check for rule 5
-	(indent-line-to (save-excursion                                         ;indentation of the next line
+  (defun arm-mode-find-indent-level ()
+	"Return the absolute ammount that an line of arm assembler should be indented."
+	(save-excursion
+	  (beginning-of-line)
+	  (if (bobp)			       ;check for rule 1
+		  0					   ;indent all the way to the left
+		(if (looking-at "^\\s *\\(/\\*\\|@\\)") ;check for rule 5
+			(save-excursion		;indentation of the next line
 			  (forward-line 1)
-			  (if (looking-at "^$") ;not empty line
-			      (progn
-				(forward-line -1)
-				(current-indentation))
-			    (current-indentation))))
-      (if (looking-at "^.*:")                                 ;check for rule 4
-	  (indent-line-to (current-indentation))
-	(let ((not-indented t) cur-indent)
-	  (save-excursion
-	    (while not-indented
-	      (forward-line -1)
-	      (if (looking-at "^.*:\\s-*\\.") ;data label
-		  (progn
-		    (setq cur-indent (current-indentation))
-		    (setq not-indented nil))
-		(if (looking-at "^.*:") ;check for rule 2
-		    (progn
-		      (setq cur-indent (+ (current-indentation) arm-tab-width))
-		      (setq not-indented nil))
-		  (if (looking-at "^.[^\\n]")             ;check for rule 3
-		      (progn
-			(setq cur-indent (current-indentation))
-			(setq not-indented nil)))))))
-	  (if (< cur-indent 0)
-	      (setq cur-indent 0))
-	  (indent-line-to cur-indent))))))
+			  (if (not (looking-at "^$")) ;if  not empty line
+				  (current-indentation) ;then keep indentation the same as last 
+				(progn
+				  (forward-line -2)
+				  (current-indentation))))	;then keep it the same as last line)
+		  (if (looking-at "^.*:")	;check for rule 4
+			  (current-indentation)	;don't mess with it
+			(let ((not-indented t)
+				  (new-indent 0)) ;all for rule 2
+			  (save-excursion
+				(while not-indented
+				  (forward-line -1)
+				  (if (looking-at "^.*:")	 ;check for rule 2
+					  (progn
+						(setq not-indented nil)
+						(setf new-indent (+ (current-indentation) arm-tab-width)))
+					(when (or (looking-at "^.*:\\s-*\\.") ;data label
+							  (looking-at "^.[^\\n]"))    ;check for rule 3
+					  (progn
+						(setq not-indented nil) ;exit loop
+						(setf new-indent (current-indentation)))))) ;don't mess with it
+				new-indent))))))) ;indent to the right
+
+  (let ((new-indent (arm-mode-find-indent-level)))
+	(if (< new-indent 0)
+		(setq new-indent 0))
+	(indent-line-to new-indent)))
 
 (defun arm-insert-comment ()
   "Insert /*   */ if on an empty line.
@@ -128,24 +132,18 @@ Then call `comment-dwim'."
   (let ((special (and (save-excursion
                         (move-beginning-of-line nil)
                         (looking-at "^\\s-*$"))
-                      (not (use-region-p)))))                                 ;empty line
+                      (not (use-region-p))))) ;empty line
     (when special
-      (progn
-        (insert "/*   */")))
+	  (insert "/*   */"))
     (comment-dwim nil)
     (when special
-      (forward-char))))                                                       ;move to middle of /*           */
+      (forward-char))))					;move to middle of /*   */
 
 ;; entry function
-(define-derived-mode arm-mode asm-mode "ARM Assembler"()
+(define-derived-mode arm-mode prog-mode "ARM Assembler"()
   "Major mode for editing Advanced RISC Machine language files."
-  (interactive)
-  (set-syntax-table arm-mode-syntax-table)
-  (use-local-map arm-mode-map)
   (set (make-local-variable 'font-lock-defaults) '(arm-font-lock-keywords nil t))
   (set (make-local-variable 'indent-line-function) #'arm-indent-line)
-  (setq major-mode 'arm-mode)
-  (run-hooks 'arm-mode-hook)
   ;; comments
   (setq-local comment-start (concat arm-comment-char " "))
   (setq-local comment-end ""))
