@@ -6,9 +6,9 @@
 
 (defvar arm-mode-hook nil
   "Hook for ARM major mode.")
-(defvar arm-tab-width 4
+(defcustom arm-tab-width 4
   "Width of tabs for `arm-mode'.")
-(defvar arm-comment-char "@"
+(defcustom arm-comment-char "@"
   "Character to denote inline comments.")
 (defvar arm-mode-map
   (let ((map (make-sparse-keymap)))
@@ -30,8 +30,8 @@
                                        "uxth" "uxtb16" "uxtb" "sxtah" "sxtab16" "sxtab" "uxtah" "uxtab16" "uxtab" "rev" "rev16" "revsh" "sel"
                                        "b" "bl" "bx" "bxj" "beq" "bne" "bcs" "bhs" "bcc" "blo" "bmi" "bpl" "bvs" "bvc" "bhi" "bls" "bge"
                                        "blt" "bgt" "bfc" "bfi" "sbfx" "ubfx" "ble" "bal" "lsl" "lsr" "asr" "ror" "rrx" "dbg" "sev" "wfe" "wfi"
-                                       "yield" "crd" "swi" "nop" "ldr" "ldm" "ldrex" "str" "stm" "strex" "swp"        "ldc" "ldc2" "stc" "stc2" "svc"
-                                       "d" "pop" "push" "strexd" "swpb" "smc"          "subs" "adr")
+                                       "yield" "crd" "swi" "nop" "ldr" "ldm" "ldrex" "str" "stm" "strex" "swp" "ldc" "ldc2" "stc" "stc2" "svc"
+                                       "d" "pop" "push" "strexd" "swpb" "smc" "subs" "adr")
                                      t))
           (non-suffix-instrs (regexp-opt '("it" "blx" "cb" "tbb" "tbh" "cpsid" "cpsie" "cps" "setend" "clrex" "cdp"
                                            "cdp2" "mrc" "mrc2" "mrrc" "mrrc2" "mcr" "mcr2" "mcrr" "mcrr2" "srs" "rfe"
@@ -40,25 +40,25 @@
           (prefixs (regexp-opt '("s" "q" "sh" "u" "uq" "uh")))
           (prefix-instrs (regexp-opt '("add16" "sub16" "add8" "sub8" "sax" "asx") t)))
       (list
-       '("^\\s-*\\.[:alpha:]+" . font-lock-keyword-face) ;.data, .text .global, etc
-       '("\\(?:\\b\\|\\_>\\)\\s-+\\.[a-zA-Z]+" . font-lock-type-face) ;data types
-       '("^\\(.*?\\):\\(.*\\)" 1 font-lock-function-name-face) ;labels
-       `(,(concat "\\<v?" suffix-instrs "\\.?" suffixes "?\\>") . font-lock-keyword-face) ;suffix instrctions
-       `(,(concat "\\<v?" prefixs prefix-instrs "\\.?" suffixes "?\\>") . font-lock-keyword-face) ;prefix and suffix  instructions
-       `(,(concat "\\<v?" non-suffix-instrs "\\>") . font-lock-keyword-face)))) ;non suffixs instructions
+       '("^\\s *\\.[[:alpha:]]+" . font-lock-keyword-face) ;.data, .text .global, etc
+       '("\\(?:\\b\\|\\_>\\)\\s-+\\.[[:alpha:]]+" . font-lock-type-face) ;data types
+       '("^\\([\\s ]*[[:alnum:]]*\\):\\(.*\\)" 1 font-lock-function-name-face) ;labels
+       `(,(concat "\\_<v?" suffix-instrs "\\.?" suffixes "?\\_>") . font-lock-keyword-face) ;suffix instrctions
+       `(,(concat "\\_<v?" prefixs prefix-instrs "\\.?" suffixes "?\\_>") . font-lock-keyword-face) ;prefix and suffix instructions
+       `(,(concat "\\_<v?" non-suffix-instrs "\\_>") . font-lock-keyword-face)))) ;non suffixs instructions
   "Lowest level of syntax highlighting: keywords and labels.")
 (defconst arm-font-lock-keywords-2
   (append (list
-           '("\\<\\(r\\|w\\|x\\|s\\|d\\)\\(?:3[0-1]\\|[1-2][0-9]\\|[0-9]\\)\\>"
+           '("\\_<\\(r\\|w\\|x\\|s\\|d\\)\\(?:3[0-1]\\|[1-2][0-9]\\|[0-9]\\)\\_>"
              . font-lock-variable-name-face) ;registers
-           '("\\<\\(e?lr\\|pc\\|w?sp\\|cpsr\\|fpsr\\)\\>" . font-lock-builtin-face) ;special registers
-           '("\\<\\([wx]zr\\)\\>" . font-lock-constant-face)) ;zero registers
+           '("\\_<\\(e?lr\\|pc\\|w?sp\\|cpsr\\|fpsr\\)\\_>" . font-lock-builtin-face) ;special registers
+           '("\\_<\\([wx]zr\\)\\_>" . font-lock-constant-face)) ;zero registers
           arm-font-lock-keywords-1)
   "Second level of syntax highlighting: keywords, labels, and registers.")
 (defconst arm-font-lock-keywords-3
   (append arm-font-lock-keywords-2
           (list
-           '("0x[a-fA-f0-9]+" . font-lock-type-face))) ;hexidecimal
+           '("0x[[:xdigit:]]+\\_>" . font-lock-type-face))) ;hexidecimal
   "Third level of syntax highlighting: keywords, labels, registers, and hexidecimal numbers.")
 (defvar arm-font-lock-keywords arm-font-lock-keywords-3
   "Default syntax highlighting: keywords, labels, registers, and hexidecimal numbers.")
@@ -69,7 +69,6 @@
     (modify-syntax-entry ?: "_" st)
     (modify-syntax-entry ?= "_" st)
     (modify-syntax-entry ?. "." st)
-    (modify-syntax-entry ?_ "w" st)	;for convention of using _ in labels
     (modify-syntax-entry ?\' "\"" st)
     ;; comments
     (modify-syntax-entry ?/ ". 14" st)
@@ -93,23 +92,25 @@
 				(progn
 				  (forward-line -2)
 				  (current-indentation))))	;then keep it the same as last line)
-		  (if (looking-at "^.*:")	;check for rule 4
-			  (current-indentation)	;don't mess with it
+		  (if (looking-at "^.*:")			;check for rule 4
+			  (current-indentation)			;don't mess with it
 			(let ((not-indented t)
-				  (new-indent 0)) ;all for rule 2
+				  (new-indent 0))		;all for rule 2
 			  (save-excursion
 				(while not-indented
+				  (when (bobp)
+					(setq not-indented nil))
 				  (forward-line -1)
-				  (if (looking-at "^.*:")	 ;check for rule 2
+				  (if (looking-at "^.*:") ;check for rule 2
 					  (progn
 						(setq not-indented nil)
-						(setf new-indent (+ (current-indentation) arm-tab-width)))
+						(setq new-indent (+ (current-indentation) arm-tab-width)))
 					(when (or (looking-at "^.*:\\s-*\\.") ;data label
-							  (looking-at "^.[^\\n]"))    ;check for rule 3
+							  (looking-at "^.[^\\n]")) ;check for rule 3
 					  (progn
 						(setq not-indented nil) ;exit loop
-						(setf new-indent (current-indentation)))))) ;don't mess with it
-				new-indent))))))) ;indent to the right
+						(setq new-indent (current-indentation))))))) ;don't mess with it
+				new-indent))))))		;indent to the right
 
 (defun arm-indent-line ()
   "Indent current line of ARM code as follows.
@@ -146,6 +147,7 @@ Then call `comment-dwim'."
   (set (make-local-variable 'indent-line-function) #'arm-indent-line)
   ;; comments
   (setq-local comment-start (concat arm-comment-char " "))
+  (setq-local tab-always-indent nil)
   (setq-local comment-end ""))
 
 (provide 'arm-mode)
