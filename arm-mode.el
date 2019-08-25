@@ -121,7 +121,7 @@ Indentation Rules:
 4: if line contains a colon (label), insert a tab character
 5: (secret) if the line is a comment allign it to the left"
   (interactive)
-    (let ((new-indent (arm-mode-find-indent-level)))
+  (let ((new-indent (arm-mode-find-indent-level)))
 	(if (< new-indent 0)
 		(setq new-indent 0))
 	(indent-line-to new-indent)))
