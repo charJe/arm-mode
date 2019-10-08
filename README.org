@@ -39,7 +39,7 @@ Emacs major mode for editing Advanced RISC Machine source code
    - ~arm-mode-hook~
    
 ** Installation
-    Clone or download wherever (usually =~/emacs.d/elpa/=): 
+    Clone or download wherever (usually =~/.emacs.d/elpa/=): 
     ~$ git clone https://github.com/charje/arm-mode~
     Then add this to your .emacs or init.el:
     ~(add-to-list 'load-path "~/.emacs.d/elpa/arm-mode")
